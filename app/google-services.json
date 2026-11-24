@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "728938690312",
+    "project_id": "gen-lang-client-0707405536",
+    "storage_bucket": "gen-lang-client-0707405536.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:728938690312:android:e406afbc0478ae4277debd",
+        "android_client_info": {
+          "package_name": "com.aistudio.daymarkcalendar.kqvtxm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "728938690312-n194i45h9qvldh66umeluh4rdai4s21h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aistudio.daymarkcalendar.kqvtxm",
+            "certificate_hash": "6cdd9be0fbfd481e02da4453de58f31f5505e348"
+          }
+        },
+        {
+          "client_id": "728938690312-mjiugq0r456poaf1spp4609oeiefe2sg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIi4jOn053AXHqVEzQBcJ3VSA4gDyegCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "728938690312-mjiugq0r456poaf1spp4609oeiefe2sg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

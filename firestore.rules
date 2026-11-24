@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidCategory(category) {
+      return category in ['WORK', 'PERSONAL', 'HEALTH', 'SOCIAL', 'FOCUS'];
+    }
+
+    function isValidReminder(reminderMinutes) {
+      return reminderMinutes is int && reminderMinutes in [-1, 0, 10, 30, 60];
+    }
+
+    function isValidCalendarEvent(data) {
+      return data.userId is string && data.userId.size() >= 1 && data.userId.size() <= 128 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
+             (!('notes' in data) || (data.notes is string && data.notes.size() <= 500)) &&
+             (!('location' in data) || (data.location is string && data.location.size() <= 120)) &&
+             data.dateEpochDay is int && data.dateEpochDay >= -365243 && data.dateEpochDay <= 365243 &&
+             data.startMinute is int && data.startMinute >= 0 && data.startMinute <= 1439 &&
+             data.endMinute is int && data.endMinute >= 1 && data.endMinute <= 1440 &&
+             data.endMinute >= data.startMinute &&
+             data.allDay is bool &&
+             data.category is string && isValidCategory(data.category) &&
+             isValidReminder(data.reminderMinutes) &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    match /users/{userId}/events/{eventId} {
+      allow get: if isOwner(userId) && isValidId(eventId);
+      allow list: if isOwner(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(eventId) &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll([
+                         'userId', 'title', 'dateEpochDay', 'startMinute',
+                         'endMinute', 'allDay', 'category', 'reminderMinutes',
+                         'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'title', 'notes', 'location', 'dateEpochDay',
+                         'startMinute', 'endMinute', 'allDay', 'category',
+                         'reminderMinutes', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidCalendarEvent(incoming());
+
+      allow update: if isOwner(userId) &&
+                       isValidId(eventId) &&
+                       isValidCalendarEvent(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'title', 'notes', 'location', 'dateEpochDay',
+                         'startMinute', 'endMinute', 'allDay', 'category',
+                         'reminderMinutes', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(eventId);
+    }
+  }
+}

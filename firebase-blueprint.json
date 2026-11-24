@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "CalendarEvent": {
+      "title": "CalendarEvent",
+      "description": "A user-authored calendar event or appointment.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner Firebase Auth UID."
+        },
+        "title": {
+          "type": "string",
+          "description": "Event title (1 to 100 characters)."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional event notes (up to 500 characters)."
+        },
+        "location": {
+          "type": "string",
+          "description": "Optional event location (up to 120 characters)."
+        },
+        "dateEpochDay": {
+          "type": "integer",
+          "description": "Event date represented as LocalDate epoch day."
+        },
+        "startMinute": {
+          "type": "integer",
+          "description": "Start time in minutes from midnight (0..1439)."
+        },
+        "endMinute": {
+          "type": "integer",
+          "description": "End time in minutes from midnight (1..1440, >= startMinute)."
+        },
+        "allDay": {
+          "type": "boolean",
+          "description": "Whether the event spans the entire day."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["WORK", "PERSONAL", "HEALTH", "SOCIAL", "FOCUS"],
+          "description": "Color-coded event category."
+        },
+        "reminderMinutes": {
+          "type": "integer",
+          "description": "Minutes before start to notify (-1 for none, or 0, 10, 30, 60)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp set via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "dateEpochDay",
+        "startMinute",
+        "endMinute",
+        "allDay",
+        "category",
+        "reminderMinutes",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/events/{eventId}": {
+      "schema": {
+        "$ref": "#/entities/CalendarEvent"
+      },
+      "description": "User-scoped calendar events subcollection."
+    }
+  }
+}

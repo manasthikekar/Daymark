@@ -1,0 +1,6 @@
+{
+  "name": "Daymark",
+  "description": "A clean, modern Kotlin calendar app with month, week, and agenda views, color-coded events, and cloud sync.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
